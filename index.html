@@ -363,15 +363,18 @@
 
    
         #drag-visual {
-            position: fixed;
-            pointer-events: none;
-            z-index: 1000;
-            transform: translate(-50%, -50%);
-            touch-action: none;
-            /* Смещаем визуализацию выше пальца */
-            transform-origin: center bottom;
-            margin-top: -60px; /* Поднимаем фигуру над пальцем */
-        }
+    position: fixed;
+    pointer-events: none;
+    z-index: 1000;
+    touch-action: none;
+
+    /* Центрируем по X, поднимаем по Y */
+    transform: translate(-50%, 0);
+    transform-origin: center top;
+    margin-top: -100px;
+}
+
+
 
 
         /* Эффект при перетаскивании */
@@ -387,7 +390,7 @@
             border-radius: 4px;
             z-index: 5; /* Выше других элементов */
             pointer-events: none;
-            margin-top: -60px; /* Смещаем вверх, как и drag-visual */
+            margin-top: -100px; /* Смещаем вверх, как и drag-visual */
         }
     </style>
 </head>
@@ -905,6 +908,9 @@
     const dragVisual = document.createElement('div');
     dragVisual.id = 'drag-visual';
     document.body.appendChild(dragVisual);
+    dragVisual.style.width = `${activeDragPiece.shape[0].length * BLOCK_SIZE}px`;
+dragVisual.style.height = `${activeDragPiece.shape.length * BLOCK_SIZE}px`;
+
 
     for (let y = 0; y < activeDragPiece.shape.length; y++) {
         for (let x = 0; x < activeDragPiece.shape[y].length; x++) {
