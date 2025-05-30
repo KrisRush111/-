@@ -361,14 +361,18 @@
             transform: scale(1.05);
         }
 
-        /* Стиль для визуального элемента перетаскивания */
+   
         #drag-visual {
             position: fixed;
             pointer-events: none;
             z-index: 1000;
             transform: translate(-50%, -50%);
             touch-action: none;
+            /* Смещаем визуализацию выше пальца */
+            transform-origin: center bottom;
+            margin-top: -60px; /* Поднимаем фигуру над пальцем */
         }
+
 
         /* Эффект при перетаскивании */
         .preview-piece.dragging-source {
@@ -376,13 +380,14 @@
             transform: scale(0.95);
         }
 
-        /* Подсветка при наведении */
-        .hover-highlight {
+       /* Подсветка при наведении - теперь на уровне с фигурой */
+       .hover-highlight {
             position: absolute;
             background-color: rgba(255, 255, 255, 0.2);
             border-radius: 4px;
-            z-index: 5;
+            z-index: 5; /* Выше других элементов */
             pointer-events: none;
+            margin-top: -60px; /* Смещаем вверх, как и drag-visual */
         }
     </style>
 </head>
@@ -867,64 +872,66 @@
             }
             
             function startDrag(e) {
-                if (gameOver) return;
-                
-                e.preventDefault();
-                
-                const pieceIndex = parseInt(e.target.dataset.pieceIndex);
-                const blockX = parseInt(e.target.dataset.blockX);
-                const blockY = parseInt(e.target.dataset.blockY);
-                
-                if (pieceIndex >= previewPieces.length) return;
-                
-                // Запоминаем элемент, с которого начали перетаскивание
-                dragStartElement = e.target.closest('.preview-piece');
-                dragStartElement.classList.add('dragging-source');
-                
-                // Создаем копию фигуры для перетаскивания
-                activeDragPiece = {
-                    ...previewPieces[pieceIndex],
-                    pieceIndex: pieceIndex,
-                    dragX: e.clientX || e.touches[0].clientX,
-                    dragY: e.clientY || e.touches[0].clientY,
-                    offsetX: blockX * BLOCK_SIZE,
-                    offsetY: blockY * BLOCK_SIZE
-                };
-                
-                // Добавляем класс для визуального эффекта
-                e.target.classList.add('dragging');
-                
-                // Создаем визуальное представление перетаскиваемой фигуры
-                const dragVisual = document.createElement('div');
-                dragVisual.id = 'drag-visual';
-                document.body.appendChild(dragVisual);
-                
-                // Рисуем всю фигуру для перетаскивания
-                for (let y = 0; y < activeDragPiece.shape.length; y++) {
-                    for (let x = 0; x < activeDragPiece.shape[y].length; x++) {
-                        if (activeDragPiece.shape[y][x]) {
-                            const block = document.createElement('div');
-                            const variant = activeDragPiece.shapeWithColors[y][x];
-                            block.className = `block ${variant}`;
-                            block.style.width = `${BLOCK_SIZE}px`;
-                            block.style.height = `${BLOCK_SIZE}px`;
-                            block.style.left = `${x * BLOCK_SIZE}px`;
-                            block.style.top = `${y * BLOCK_SIZE}px`;
-                            dragVisual.appendChild(block);
-                        }
-                    }
-                }
-                
-                // Создаем подсветку для предпросмотра позиции
-                hoverHighlight = document.createElement('div');
-                hoverHighlight.className = 'hover-highlight';
-                hoverHighlight.style.width = `${activeDragPiece.shape[0].length * BLOCK_SIZE}px`;
-                hoverHighlight.style.height = `${activeDragPiece.shape.length * BLOCK_SIZE}px`;
-                gameBoard.appendChild(hoverHighlight);
-                
-                // Обновляем позицию сразу
-                updateDragPosition(e);
+    if (gameOver) return;
+
+    e.preventDefault();
+
+    const pieceIndex = parseInt(e.target.dataset.pieceIndex);
+    const blockX = parseInt(e.target.dataset.blockX);
+    const blockY = parseInt(e.target.dataset.blockY);
+
+    if (pieceIndex >= previewPieces.length) return;
+
+    // Запоминаем элемент, с которого начали перетаскивание
+    dragStartElement = e.target.closest('.preview-piece');
+    dragStartElement.classList.add('dragging-source');
+
+    // Создаем копию фигуры для перетаскивания
+    activeDragPiece = {
+        ...previewPieces[pieceIndex],
+        pieceIndex: pieceIndex,
+        dragX: e.clientX || e.touches[0].clientX,
+        dragY: e.clientY || e.touches[0].clientY,
+        offsetX: blockX * BLOCK_SIZE,
+        offsetY: blockY * BLOCK_SIZE,
+        selectedBlockX: blockX,  // добавлено
+        selectedBlockY: blockY   // добавлено
+    };
+
+    // Добавляем класс для визуального эффекта
+    e.target.classList.add('dragging');
+
+    // Создаем визуальное представление перетаскиваемой фигуры
+    const dragVisual = document.createElement('div');
+    dragVisual.id = 'drag-visual';
+    document.body.appendChild(dragVisual);
+
+    for (let y = 0; y < activeDragPiece.shape.length; y++) {
+        for (let x = 0; x < activeDragPiece.shape[y].length; x++) {
+            if (activeDragPiece.shape[y][x]) {
+                const block = document.createElement('div');
+                const variant = activeDragPiece.shapeWithColors[y][x];
+                block.className = `block ${variant}`;
+                block.style.width = `${BLOCK_SIZE}px`;
+                block.style.height = `${BLOCK_SIZE}px`;
+                block.style.left = `${x * BLOCK_SIZE}px`;
+                block.style.top = `${y * BLOCK_SIZE}px`;
+                dragVisual.appendChild(block);
             }
+        }
+    }
+
+    // Создаем подсветку для предпросмотра позиции
+    hoverHighlight = document.createElement('div');
+    hoverHighlight.className = 'hover-highlight';
+    hoverHighlight.style.width = `${activeDragPiece.shape[0].length * BLOCK_SIZE}px`;
+    hoverHighlight.style.height = `${activeDragPiece.shape.length * BLOCK_SIZE}px`;
+    gameBoard.appendChild(hoverHighlight);
+
+    // Обновляем позицию сразу
+    updateDragPosition(e);
+}
+
             
             function dragPiece(e) {
                 if (!activeDragPiece) return;
@@ -947,98 +954,106 @@
                 // Обновляем подсветку позиции на игровом поле
                 if (hoverHighlight) {
                     const rect = gameBoard.getBoundingClientRect();
-                    const boardX = Math.floor((clientX - rect.left) / BLOCK_SIZE);
-                    const boardY = Math.floor((clientY - rect.top) / BLOCK_SIZE);
-                    
-                    // Позиционируем подсветку точно по сетке
-                    if (boardX >= 0 && boardX < COLS && boardY >= 0 && boardY < ROWS) {
-                        hoverHighlight.style.left = `${boardX * BLOCK_SIZE}px`;
-                        hoverHighlight.style.top = `${boardY * BLOCK_SIZE}px`;
-                        hoverHighlight.style.display = 'block';
-                    } else {
-                        hoverHighlight.style.display = 'none';
-                    }
+
+const pixelX = clientX - rect.left;
+const pixelY = clientY - rect.top;
+
+const snappedX = Math.round(pixelX / BLOCK_SIZE);
+const snappedY = Math.round(pixelY / BLOCK_SIZE);
+
+// Проверка, влезает ли вся фигура на поле
+if (
+    snappedX >= 0 &&
+    snappedY >= 0 &&
+    snappedX + activeDragPiece.shape[0].length <= COLS &&
+    snappedY + activeDragPiece.shape.length <= ROWS
+) {
+    hoverHighlight.style.left = `${snappedX * BLOCK_SIZE}px`;
+    hoverHighlight.style.top = `${snappedY * BLOCK_SIZE}px`;
+    hoverHighlight.style.display = 'block';
+} else {
+    hoverHighlight.style.display = 'none';
+}
+
                 }
             }
             
             function endDrag(e) {
-                if (!activeDragPiece) return;
-                
-                e.preventDefault();
-                
-                // Удаляем визуальный элемент
-                const dragVisual = document.getElementById('drag-visual');
-                if (dragVisual) {
-                    dragVisual.remove();
-                }
-                
-                // Удаляем подсветку
-                if (hoverHighlight) {
-                    hoverHighlight.remove();
-                    hoverHighlight = null;
-                }
-                
-                // Удаляем класс dragging
-                const draggingBlocks = document.querySelectorAll('.block.dragging');
-                draggingBlocks.forEach(block => block.classList.remove('dragging'));
-                
-                // Удаляем класс dragging-source
-                if (dragStartElement) {
-                    dragStartElement.classList.remove('dragging-source');
-                    dragStartElement = null;
-                }
-                
-                // Получаем координаты на игровом поле
-                const rect = gameBoard.getBoundingClientRect();
-                const clientX = e.clientX || (e.changedTouches ? e.changedTouches[0].clientX : 0);
-                const clientY = e.clientY || (e.changedTouches ? e.changedTouches[0].clientY : 0);
-                
-                // Проверяем, что отпустили на игровом поле
-                if (clientX >= rect.left && clientX <= rect.right && 
-                    clientY >= rect.top && clientY <= rect.bottom) {
-                    
-                    // Вычисляем координаты на поле
-                    const boardX = Math.floor((clientX - rect.left) / BLOCK_SIZE);
-                    const boardY = Math.floor((clientY - rect.top) / BLOCK_SIZE);
-                    
-                    // Проверяем, можно ли разместить фигуру
-                    if (!collision(boardX, boardY, activeDragPiece.shape)) {
-                        // Размещаем фигуру на поле точно в выбранной позиции
-                        for (let y = 0; y < activeDragPiece.shape.length; y++) {
-                            for (let x = 0; x < activeDragPiece.shape[y].length; x++) {
-                                if (activeDragPiece.shape[y][x]) {
-                                    const newY = boardY + y;
-                                    const newX = boardX + x;
-                                    
-                                    if (newY >= 0 && newY < ROWS && newX >= 0 && newX < COLS) {
-                                        board[newY][newX] = activeDragPiece.shapeWithColors[y][x];
-                                    }
-                                }
-                            }
-                        }
-                        
-                        // Удаляем использованную фигуру из превью
-                        previewPieces.splice(activeDragPiece.pieceIndex, 1);
-                        
-                        // Проверяем линии
-                        checkLines();
-                        
-                        // Проверяем конец игры
-                        if (!checkGameOver()) {
-                            // Если превью пустые, создаем новые фигуры
-                            if (previewPieces.length === 0) {
-                                createPreviewPieces();
-                            } else {
-                                drawPreviewPieces();
-                            }
-                            
-                            drawBoard();
-                        }
+    if (!activeDragPiece) return;
+
+    e.preventDefault();
+
+    // Удаляем визуальный элемент
+    const dragVisual = document.getElementById('drag-visual');
+if (!dragVisual) return;
+
+const visualRect = dragVisual.getBoundingClientRect(); // сначала получаем позицию
+dragVisual.remove(); // только потом удаляем элемент
+
+
+    // Удаляем подсветку
+    if (hoverHighlight) {
+        hoverHighlight.remove();
+        hoverHighlight = null;
+    }
+
+    // Удаляем класс dragging
+    const draggingBlocks = document.querySelectorAll('.block.dragging');
+    draggingBlocks.forEach(block => block.classList.remove('dragging'));
+
+    // Удаляем класс dragging-source
+    if (dragStartElement) {
+        dragStartElement.classList.remove('dragging-source');
+        dragStartElement = null;
+    }
+
+    // Получаем левый верхний угол фигуры через DOM
+    const boardRect = gameBoard.getBoundingClientRect();
+    if (!visualRect) return;
+
+    const offsetX = visualRect.left - boardRect.left;
+    const offsetY = visualRect.top - boardRect.top;
+
+    const snappedX = Math.round(offsetX / BLOCK_SIZE);
+    const snappedY = Math.round(offsetY / BLOCK_SIZE);
+
+    // Проверка, помещается ли фигура в этом месте
+    if (!collision(snappedX, snappedY, activeDragPiece.shape)) {
+        for (let y = 0; y < activeDragPiece.shape.length; y++) {
+            for (let x = 0; x < activeDragPiece.shape[y].length; x++) {
+                if (activeDragPiece.shape[y][x]) {
+                    const newY = snappedY + y;
+                    const newX = snappedX + x;
+
+                    if (newY >= 0 && newY < ROWS && newX >= 0 && newX < COLS) {
+                        board[newY][newX] = activeDragPiece.shapeWithColors[y][x];
                     }
                 }
-                
-                activeDragPiece = null;
             }
+        }
+
+        // Удаляем использованную фигуру из превью
+        previewPieces.splice(activeDragPiece.pieceIndex, 1);
+
+        // Проверяем линии
+        checkLines();
+
+        // Проверяем конец игры
+        if (!checkGameOver()) {
+            // Если превью пустые, создаем новые фигуры
+            if (previewPieces.length === 0) {
+                createPreviewPieces();
+            } else {
+                drawPreviewPieces();
+            }
+
+            drawBoard();
+        }
+    }
+
+    activeDragPiece = null;
+}
+
             
             restartBtn.addEventListener('click', startGame);
             
