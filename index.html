@@ -59,7 +59,7 @@
             margin: 0;
         }
         
-        body {
+             body {
             background: linear-gradient(135deg, #0f172a, #1e293b);
             min-height: 100vh;
             display: flex;
@@ -73,6 +73,23 @@
             padding: 20px;
             color: #f3f4f6;
             -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
+        }
+        
+        html {
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            height: 100%;
+        }
+
+           body {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
             -moz-user-select: none;
             -ms-user-select: none;
             user-select: none;
@@ -148,7 +165,7 @@
         
         .controls-container {
             display: flex;
-            gap: 20px;
+            gap: 15px;
             margin-bottom: 30px;
             width: 100%;
             justify-content: center;
@@ -159,10 +176,10 @@
             background: linear-gradient(135deg, #6366f1, #8b5cf6);
             border: none;
             border-radius: 50%;
-            width: 80px;
-            height: 80px;
+            width: 90px;
+            height: 90px;
             color: white;
-            font-size: 32px;
+            font-size: 36px;
             cursor: pointer;
             box-shadow: 0 4px 15px rgba(99, 102, 241, 0.5);
             transition: all 0.15s ease;
@@ -171,7 +188,23 @@
             justify-content: center;
             -webkit-tap-highlight-color: transparent;
             touch-action: manipulation;
-            margin: 0 15px;
+            flex: 0 0 auto;
+        }
+
+        @media (max-width: 768px) {
+            .control-btn {
+                width: 80px;
+                height: 80px;
+                font-size: 30px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .control-btn {
+                width: 70px;
+                height: 70px;
+                font-size: 28px;
+            }
         }
         
         .control-btn:active {
@@ -179,9 +212,7 @@
             box-shadow: 0 2px 5px rgba(99, 102, 241, 0.7);
         }
         
-        #jumpButton {
-            animation: pulse 2s infinite;
-        }
+
         
         .key-helper {
             display: flex;
@@ -501,16 +532,9 @@
             }
             
             .controls-container {
-                gap: 20px;
-                padding: 0 20px;
-                margin-bottom: 40px;
-            }
-            
-            .control-btn {
-                width: 70px;
-                height: 70px;
-                font-size: 30px;
-                margin: 0 10px;
+                gap: 15px;
+                padding: 0 15px;
+                margin-bottom: 30px;
             }
             
             .footer-item {
@@ -556,21 +580,8 @@
             }
             
             .controls-container {
-                gap: 15px;
-                padding: 0 20px;
-            }
-            
-            .control-btn {
-                width: 60px;
-                height: 60px;
-                font-size: 24px;
-            }
-            
-            #jumpButton {
-                width: 75px;
-                height: 75px;
-                font-size: 30px;
-                margin: 0 15px;
+                gap: 10px;
+                padding: 0 10px;
             }
             
             .key {
