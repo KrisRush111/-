@@ -155,7 +155,7 @@
         
         #gameCanvas {
             background: rgba(31, 41, 55, 0.7);
-            border: 2px solid rgba(99, 102, 241, 0.5);
+            border: none;
             border-radius: 8px;
             width: 100%;
             max-width: 700px;
@@ -398,23 +398,6 @@
             box-shadow: 0 4px 15px rgba(99, 102, 241, 0.5);
         }
         
-        #backArrow {
-            position: absolute;
-            top: 25px;
-            left: 25px;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: rgba(31, 41, 55, 0.7);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 0 15px rgba(99, 102, 241, 0.2);
-            z-index: 50;
-        }
         
         #backArrow:hover {
             transform: translateX(-3px);
@@ -609,11 +592,6 @@
     </style>
 </head>
 <body>
-    <!-- Белая стрелка для возврата -->
-    <div class="back-arrow" id="backArrow">
-        <i class="fas fa-arrow-left"></i>
-    </div>
-    
     <!-- Модальное окно подтверждения -->
     <div class="confirmation-modal" id="confirmationModal">
         <div class="confirmation-content">
@@ -626,16 +604,13 @@
         </div>
     </div>
     
-    <div class="game-container">
+    <div class="game-container" style="position: relative;">
+        <div class="back-arrow" id="backArrow" style="position: absolute; top: 25px; left: 25px; width: 50px; height: 50px; border-radius: 50%; background: rgba(31, 41, 55, 0.7); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s; border: 2px solid rgba(255, 255, 255, 0.3); box-shadow: 0 0 15px rgba(99, 102, 241, 0.2); z-index: 50;">
+            <i class="fas fa-arrow-left" style="color: white; font-size: 24px;"></i>
+        </div>
         <div class="title-container">
-            <div class="player-avatar">
-                <i class="fas fa-user-astronaut"></i>
-            </div>
-            <h1 class="text-3xl font-bold">
-                <span class="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">
-                    Прыг
-                </span>
-            </h1>
+          
+        
         </div>
         
         <div class="rcc-container">
